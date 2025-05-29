@@ -21,18 +21,54 @@
     }
 
     /* Your style here... */
+    .center {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+    #progress-container {
+      width: 50%;
+      height: 16px;
+      background-color: #ddd;
+      margin: 20px auto;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    #progress-bar {
+      width: 0%;
+      height: 100%;
+      background-color: #4caf50;
+      transition: width 0.1s;
+    }
+    #click-button {
+      font-size: 24px;
+      padding: 10px 20px;
+    }
+    #restart-button {
+      visibility: hidden;
+      font-size: 24px;
+      padding: 10px 20px;
+    }
+    #message {
+      visibility: hidden;
+      text-align: center;
+      font-size: 24px;
+    }
   </style>
 </head>
 
 <body>
   <div id="captcha-container">
     <!-- Add your CAPTCHA here: -->
-    Hello world!
-
-    <!-- We've added a sample button. Feel free to remove it: -->
-    <button id="solve">
-      Solve!
-    </button>
+    <div id="message">💩💩💩</div>
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+    <button id="click-button" class="center">Mash!</button>
+    <button id="restart-button" class="center">Retry</button>
   </div>
 
   <script type="text/javascript">
@@ -43,8 +79,85 @@
       }
 
       // Your CAPTCHA code goes here, we've added a simple example below:
-      document.getElementById('solve')
-           .addEventListener('click', () => captchaSuccess());
+      //document.getElementById('solve').addEventListener('click', () => captchaSuccess());
+
+      const progressBar = document.getElementById('progress-bar');
+      const message = document.getElementById('message');
+      const clickButton = document.getElementById('click-button');
+      const retryButton = document.getElementById('restart-button');
+
+      let progress = 0; // range: 0 to 100
+      const clickIncrease = 25; // how much each click increases the bar
+      const drainRate = 10; // how much the bar decreases per tick
+      const drainInterval = 100; // interval in ms
+
+      let gameOver = false;
+      
+      //update the progress bar
+      function updateBar() {
+        progressBar.style.width = progress + '%';
+      }
+
+      //check for game over
+      function checkEnd() {
+        if (progress >= 100) {
+          clearInterval(drainIntervalId);
+          message.textContent = "🎉 Probably A Human!";
+          message.style.visibility = "visible";
+          gameOver = true;
+          setTimeout(() => captchaSuccess(), 1000);
+        } else if (progress <= 0) {
+          clearInterval(drainIntervalId);
+          drainIntervalId = null;
+          gameOver = true;
+          clickButton.style.visibility = "hidden";
+          message.textContent = "🤖 Robot Detected!";
+          message.style.visibility = "visible";
+          
+          //wait a sec before allowing retry
+          setTimeout(()=>{
+          retryButton.style.visibility = 'visible';
+          }, 1000);
+          
+        }
+      }
+
+      //the masher button
+      clickButton.addEventListener('click', () => {
+        if (gameOver) return;
+        if(drainIntervalId == null) {
+          startDrainInterval();
+        }
+        progress = Math.min(100, progress + clickIncrease);
+        updateBar();
+        checkEnd();
+      });
+
+      //the retry button
+      retryButton.addEventListener('click', () => {
+        retryButton.style.visibility = 'hidden';
+        message.style.visibility = "hidden";
+        clickButton.style.visibility = "visible";
+        progress = 0;
+        gameOver = false;
+        gameStarted = false;
+        updateBar();
+      });
+
+      //the timer to drain the progress
+      let drainIntervalId = null;
+      function startDrainInterval() {
+        drainIntervalId = setInterval(() => {
+          if (gameOver) {
+            clearInterval(drainIntervalId);
+            return;
+          }
+          progress = Math.max(0, progress - drainRate);
+          updateBar();
+          checkEnd();
+        }, drainInterval);
+      }
+
 
     })(window, document);
   </script>
