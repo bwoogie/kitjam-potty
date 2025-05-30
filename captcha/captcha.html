@@ -155,14 +155,19 @@
       position: absolute;
       left: 162px;
       top: 10px;
-      animation: plunge-ani 250ms;
-      
+      /*animation: plunge-ani 250ms;*/
+      animation: plunge-idle ease-in-out 1000ms infinite;
     }
 
     @keyframes plunge-ani {
       0%, 100% {transform: translateY(0px);}
       75% {transform: translateY(15px);}
       50% {transform: translateY(70px);}
+    }
+
+    @keyframes plunge-idle {
+      0%, 100% {transform: translate(0px, 0px);}
+      50% {transform: translate(0px, 5px);}
     }
 
   </style>
@@ -209,6 +214,13 @@
         progressBar.style.height = progress + '%';
       }
 
+      function idleAnimation() {
+        plunger.style.animation = 'none';
+        plunger.offsetHeight; /* trigger reflow */
+        plunger.style.animation = null;   
+        plunger.style.animation = "plunge-idle ease-in-out 1000ms infinite";
+      }
+
       //check for game over
       function checkEnd() {
         if (progress >= 100) {
@@ -217,20 +229,25 @@
           message.textContent = "🎉 Probably A Human!";
           message.style.visibility = "visible";
           gameOver = true;
+          idleAnimation();
           setTimeout(() => captchaSuccess(), 2000);
         } else if (progress <= 0) {
           clearInterval(drainIntervalId);
           drainIntervalId = null;
           gameOver = true;
           clickButton.style.visibility = "hidden";
-          message.className = "failed";
-          message.textContent = "🤖 Robot Detected!";
-          message.style.visibility = "visible";
+          idleAnimation();
+          setTimeout(()=>{
+            message.className = "failed";
+            message.textContent = "🤖 Robot Detected!";
+            message.style.visibility = 'visible';
+          }, 500);
           
+            
           //wait a sec before allowing retry
           setTimeout(()=>{
-          retryButton.style.visibility = 'visible';
-          }, 1000);
+            retryButton.style.visibility = 'visible';
+          }, 2000);
           
         }
       }
