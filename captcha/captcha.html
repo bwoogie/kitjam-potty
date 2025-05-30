@@ -15,7 +15,7 @@
     }
 
     #captcha-container {
-      background: white;
+      background: blue;
       width: 390px;
       height: 300px;
     }
@@ -30,12 +30,14 @@
       transform: translate(-50%, -50%);
     }
     #progress-container {
+      position: relative;
       width: 50%;
       height: 16px;
       background-color: #ddd;
       margin: 20px auto;
       border-radius: 5px;
       overflow: hidden;
+      z-index: 999999;
     }
     #progress-bar {
       width: 0%;
@@ -44,18 +46,53 @@
       transition: width 0.1s;
     }
     #click-button {
+      position: relative;
       font-size: 24px;
       padding: 10px 20px;
+      z-index: 999999;
     }
     #restart-button {
+      position: relative;
       visibility: hidden;
       font-size: 24px;
       padding: 10px 20px;
+      z-index: 999999;
     }
     #message {
+      position: relative;
       visibility: hidden;
       text-align: center;
       font-size: 24px;
+      z-index: 999999;
+    }
+    #potty1 {
+      background-image: url("images/potty_01.png");
+      width: 186px;
+      height: 205px;
+      left: 102px;
+      z-index: 1;
+      overflow: hidden;
+      position: absolute;
+    }
+    #potty2 {
+      background-image: url("images/potty_02.png");
+      width: 186px;
+      height: 129px;
+      top: 171px;
+      left: 102px;
+      z-index: 3;
+      overflow: hidden;
+      position: absolute;
+    }
+    #plunger {
+      background-image: url("images/plunger.png");
+      width: 68px;
+      height: 186px;
+      z-index: 2;
+      overflow: hidden;
+      position: absolute;
+      left: 152px;
+      top: 50px;
     }
   </style>
 </head>
@@ -63,6 +100,9 @@
 <body>
   <div id="captcha-container">
     <!-- Add your CAPTCHA here: -->
+    <div id="potty1"></div>
+    <div id="potty2"></div>
+    <div id="plunger"></div>
     <div id="message">💩💩💩</div>
     <div id="progress-container">
       <div id="progress-bar"></div>
