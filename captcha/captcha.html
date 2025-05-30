@@ -68,12 +68,22 @@
       visibility: hidden;
       text-align: center;
       top: 120px;
-      left: 80px;
+      width:80%;
       padding: 16px;
-      background-color: #4caf50;
+      left: 0;
+      right: 0;
+      margin: auto;
       border: 2px solid #ddd;
       font-size: 24px;
       z-index: 9999999;
+    }
+    .win {
+      color: #000000;
+      background-color: #4caf50;
+    }
+    .failed {
+      color: #ffffff;
+      background-color: #e00c0c;
     }
     #potty1 {
       background-image: url("images/potty_01.png");
@@ -171,6 +181,7 @@
       function checkEnd() {
         if (progress >= 100) {
           clearInterval(drainIntervalId);
+          message.className = "win";
           message.textContent = "🎉 Probably A Human!";
           message.style.visibility = "visible";
           gameOver = true;
@@ -180,6 +191,7 @@
           drainIntervalId = null;
           gameOver = true;
           clickButton.style.visibility = "hidden";
+          message.className = "failed";
           message.textContent = "🤖 Robot Detected!";
           message.style.visibility = "visible";
           
