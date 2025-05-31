@@ -12,9 +12,11 @@
       margin: 0;
       padding: 0;
       font-family: sans-serif;
+      overflow: hidden;
     }
 
     #captcha-container {
+      
       background: url("images/bg.png");
       width: 390px;
       height: 300px;
@@ -196,6 +198,19 @@
       50% {transform: translate(0px, 5px);}
     }
 
+  .particle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #0f43d3;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 1s ease-out;
+      z-index: 40;
+      
+    }
+
   </style>
 </head>
 
@@ -294,7 +309,8 @@
         plunger.offsetHeight; /* trigger reflow */
         plunger.style.animation = null;   
         plunger.style.animation = "plunge-ani 250ms";
-        
+
+        createSplash(200, 200);
 
         updateBar();
         checkEnd();
@@ -325,6 +341,50 @@
         }, drainInterval);
       }
 
+      function createSplash(x, y) {
+    const particles = 20;
+
+    for (let i = 0; i < particles; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      document.body.appendChild(particle);
+
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = Math.random() * 5 + 2;
+
+      let vx = Math.cos(angle) * speed;
+      let vy = Math.sin(angle) * speed - 5; // initial upward force
+
+      let px = x;
+      let py = y;
+      let alpha = 1;
+      let gravity = 0.3;
+
+      function animate() {
+        vx *= 0.98; // slight air resistance
+        vy += gravity;
+        px += vx;
+        py += vy;
+        alpha -= 0.02;
+
+        particle.style.left = px + 'px';
+        particle.style.top = py + 'px';
+        particle.style.opacity = alpha;
+
+        if (alpha > 0) {
+          requestAnimationFrame(animate);
+        } else {
+          particle.remove();
+        }
+      }
+
+      // Set initial position
+      particle.style.left = x + 'px';
+      particle.style.top = y + 'px';
+
+      requestAnimationFrame(animate);
+    }
+  }
 
     })(window, document);
   </script>
